@@ -9,6 +9,8 @@ export interface CommonQuestionResponseDto {
     id               : string;
     name             : string;
     type             : TypeQuestion;
+    type_question   ?: string;
+    question_options?: Array<string>;
     created_at       : string;
     updated_at       : string;
     section         ?: SectionResponseDto,

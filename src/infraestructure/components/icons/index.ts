@@ -1,6 +1,7 @@
 
 
 
+export { AddQuestionIcon } from './AddQuestionIcon';
 export { AlertTriangle } from './AlertTriangle';
 export { ArrowNarrowLeft } from './ArrowNarrowLeft';
 export { ArrowNarrowRight } from './ArrowNarrowRight';
@@ -22,6 +23,7 @@ export { CircleOff } from './CircleOff';
 export { ClearAllIcon } from './ClearAllIcon';
 export { ClickIcon } from './ClickIcon';
 export { ClockIcon } from './ClockIcon';
+export { ClosedQuestionIcon } from './ClosedQuestionIcon';
 export { DimensionsIcon } from './DimensionsIcon';
 export { DotsVertical } from './DotsVertical';
 export { DownloadIcon } from './DownloadIcon';
@@ -38,9 +40,11 @@ export { HomeIcon } from './HomeIcon';
 export { InfoCircle } from './InfoCircle';
 export { LineIcon } from './LineIcon';
 export { LinkIcon } from './LinkIcon';
+export { ListOptionIcon } from './ListOptionsIcon';
 export { LockIcon } from './LockIcon';
 export { LogoutIcon } from './LogoutIcon';
 export { NumbersIcon } from './NumbersIcon';
+export { OptionQuestionIcon } from './OptionQuestionIcon';
 export { PausePlayer } from './PausePlayer';
 export { PlayerPlay } from './PlayerPlay';
 export { PlayListIcon } from './PlayListIcon';

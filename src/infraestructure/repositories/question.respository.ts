@@ -34,7 +34,7 @@ export const questionRepository = {
     getQuestionById: async (questionId: string): Promise<Question | string> => {
         try {
             const { question } = await http.get<QuestionResponseDto>(`/auth/questions/${questionId}`);
-            return new Question(question.id, question.name, question.type, question.created_at, question.updated_at, question.section!, question.category!, question?.qualification, question?.dimension, question?.domain);
+            return new Question(question.id, question.name, question.type, question.created_at, question.updated_at, question.type_question!, question.question_options!, question.section!, question.category!, question?.qualification, question?.dimension, question?.domain);
         } catch (error) {
             return error as string;
         }

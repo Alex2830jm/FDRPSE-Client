@@ -1,10 +1,10 @@
 import { ForwardedRef, Fragment, forwardRef, useImperativeHandle, useState } from 'react';
 import * as Yup from 'yup';
-import { useFormik } from 'formik';
+import { Field, FieldArray, Formik, useFormik } from 'formik';
 
-import { Button, Input, Select, SelectItem, useDisclosure } from '@nextui-org/react';
+import { Button, Input, Select, SelectItem, useDisclosure, Tooltip } from '@nextui-org/react';
 
-import { BoxIcon, BrandDatabricks, CategoryIcon, ClickIcon, DimensionsIcon, QuestionIcon, StarsIcon, StarsOff } from '../icons';
+import { AddQuestionIcon, BoxIcon, BrandDatabricks, CategoryIcon, ClickIcon, ClosedQuestionIcon, DimensionsIcon, OptionQuestionIcon, QuestionIcon, StarsIcon, StarsOff } from '../icons';
 import { createQuestionValidation } from '../../validations/question.validations';
 
 import { useQuestion } from '../../../app/hooks/useQuestion';
@@ -36,6 +36,8 @@ export const FormQuestion = forwardRef<ValidateStep>((__, ref: ForwardedRef<Vali
         initialValues:
         {
             name: question?.name || '', type: question?.type || 'gradable',
+            type_question: question?.type_question || '',
+            question_options: question?.question_options || [],
             category_id: '',
             domain_id: '',
             dimension_id: question?.dimension?.id || '',
@@ -44,6 +46,7 @@ export const FormQuestion = forwardRef<ValidateStep>((__, ref: ForwardedRef<Vali
         },
         validationSchema: Yup.object(createQuestionValidation()),
         onSubmit: (data) => {
+            console.log(data),
             preSaveQuestion({
                 ...data,
                 section_id: +(data.section_id),
@@ -259,6 +262,77 @@ export const FormQuestion = forwardRef<ValidateStep>((__, ref: ForwardedRef<Vali
 
                         </div>
 
+                    )
+                }
+                { 
+                    formik.values.type === 'nongradable' && (
+                        <RadioGroupStyled
+                            value={formik.values.type_question}
+                            onChange={formik.handleChange}
+                            isInvalid={formik.touched.type_question && formik.errors.type_question ? true : false}
+                            errorMessage={formik.touched.type_question && formik.errors.type_question && formik.errors.type_question}
+                            name="type_question"
+                            orientation="horizontal"
+                            className="my-10"
+                        >
+                            <RadioGroupStyled.RadioItem
+                                icon={<ClosedQuestionIcon strokeWidth={2} />}
+                                title='Pregunta Cerrada'
+                                value='open'
+                                description='Esta opción permite que la pregunta sea cerrada (Si / No)'
+                            />
+                            <RadioGroupStyled.RadioItem
+                                title='Pregunta Con Opción Múltiple'
+                                value='closed'
+                                description='Esta opción permite que la pregunta cuente con opciones múltiples'
+                                icon={<OptionQuestionIcon strokeWidth={2} />}
+                            />
+                            <br />
+                        </RadioGroupStyled>
+                    ) 
+                }
+                {
+                    (formik.values.type === 'nongradable' && formik.values.type_question === 'closed') && (
+                        <Formik
+                            initialValues={{ question_options: formik.values.question_options || [""]}}
+                            onSubmit={(values) => {
+                                const opcion = values.question_options?.map((opcion) => opcion);
+                                console.log(opcion);
+                            }}
+                        >
+                            {({ values }) => (
+                                <FieldArray
+                                    name="question_options"
+                                    render={(arrayHelpers) => (
+                                        <div>
+                                            {values.question_options?.map((_, index) => (
+                                                <div key={index} className="grid grid-cols-3 gap-2 items-center">
+                                                    <div className='col-span-1 p-2'>
+                                                        <Field
+                                                            className="bg-transparent border border-emerald-500 rounded w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
+                                                            name={`question_options[${index}]`}
+                                                            type="text"
+                                                            placeholder={`No. Opción: ${index + 1}`}
+                                                            value={formik.values.question_options?.[index] || [""]}
+                                                            onChange={formik.handleChange}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            ))}
+                                            <Tooltip content="Agregar Opción" color="foreground" size="sm">
+                                                <Button
+                                                    type="button"
+                                                    className=" inline-block items-center rounded-md bg-emerald-600 px-2.5 mx-2 hover:bg-emerald-500 my-2 text-zinc-100 text-center "
+                                                    onClick={() => arrayHelpers.push('')}
+                                                >
+                                                    <AddQuestionIcon />
+                                                </Button>
+                                            </Tooltip> 
+                                        </div>
+                                    )}
+                                />
+                            )}
+                        </Formik>
                     )
                 }
             </form>

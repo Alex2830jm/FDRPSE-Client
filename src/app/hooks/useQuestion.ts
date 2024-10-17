@@ -32,17 +32,17 @@ export const useQuestion = () => {
         domain: domains.find(domain => domain.id == domain_id) || null,
     });
 
-    const preSaveQuestion = ({ name, type, ...rest }: CreateQuestionDto): void => {
+    const preSaveQuestion = ({ name, type, type_question, question_options, ...rest }: CreateQuestionDto): void => {
         const qualifications = {
             'category': rest?.category,
             'domain': rest?.domain,
-        }
+        }        
         const getDetails = getQuestionDetailsBeforeSave(rest);
         dispatch({
             type: 'QUESTION - Presave question',
             payload: {
                 question: {
-                    ...new Question(crypto.randomUUID(), name, type, new Date().toLocaleString(), new Date().toLocaleString()),
+                    ...new Question(crypto.randomUUID(), name, type, new Date().toLocaleString(), new Date().toLocaleString(), type_question!, question_options!),
                     ...getDetails,
                 },
                 qualifications,
