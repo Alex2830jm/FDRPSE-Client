@@ -6,8 +6,13 @@ export const useAnswerQuestion = () => {
     const handlePreviousStep = useCallback(() => setStep(step => step <= 1 ? step : step - 1), []);
     const handleNextStep = useCallback(() => setStep(step => step + 1), []);
 
-    const handleChangeOptionValue = (formik: any, value: number | string, questionId: number) => {
-        formik.setFieldValue(`question_id_${questionId}`, value, true);
+    const handleChangeOptionValue = (formik: any, value: number | string, questionId: string, type_question:string) => {
+        //formik.setFieldValue(`question_id_${questionId}`, value, true);
+        if( type_question === 'closed') {
+            formik.setFieldValue(`question_closed_id_${questionId}`, value, true);
+        } else {
+            formik.setFieldValue(`question_id_${questionId}`, value, true);
+        }
     }
 
     return {

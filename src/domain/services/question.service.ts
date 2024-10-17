@@ -47,15 +47,26 @@ export const questionService = () => {
     const createBodyRequest = (formQuestionData: QuestionsField): SaveUserQuestionDto => {
         const body = Object.entries(formQuestionData).map(([key, value]) => {
             const question_id = key.split("_").pop();
+            const type_question = key.split("_").includes('closed') ? 'closed' : '';
+           if( type_question === 'closed' ){
             return {
                 question_id: question_id!,
-                qualification: JSON.parse(value),
+                option: JSON.parse(value),
                 type: key.split("_").includes('section') ? 'section' : 'question' as TypeSaveAnswer,
+                type_question: type_question,
             }
+           } else {
+             return {
+                question_id: question_id!,
+                qualification: JSON.parse(value),
+                type: key.split("_").includes('section') ? 'section' : 'question' as TypeSaveAnswer, 
+             }
+           }
         });
 
         return { questions: body }
     }
+      
 
     const saveQuestionUser = async (surveyId: string, guideId: string, questions: QuestionsField) => {
         const formQuestionData = createBodyRequest(questions!);
@@ -65,8 +76,8 @@ export const questionService = () => {
     }
 
     const saveQuestionNongradableUser = async (surveyId: string, guideId: string, questions: QuestionsField) => {
-
-        const formQuestionData = createBodyRequest(questions!);
+        const formQuestionData = createBodyRequest(questions);
+        //console.log(formQuestionData)
         const { success } = await questionRepository.saveUserAnswers(surveyId, guideId, formQuestionData, 'nongradable');
         if (!success) return navigate('/auth/')
     }

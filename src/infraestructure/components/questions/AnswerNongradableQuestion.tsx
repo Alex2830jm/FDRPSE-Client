@@ -27,11 +27,11 @@ export const AnswerNongradableQuestion = ({ section, showFooterControls = true }
 
   const { guideUser } = guideService();
 
-
   const formik = useFormik({
     initialValues: createFieldQuestion(section.questions!),
     validationSchema: isBinary ? Yup.object(qustionAnswerValidation(section.questions)) : false,
     onSubmit: async (data) => {
+      console.log(data);
       clearQuestionBySection();
       if (section.canFinishGuide && !isBinary) {
         await saveQuestionNongradableUser(`${guideUser!.surveyId}`, `${guideUser!.guideId}`, { [`question_section_${section.id}`]: JSON.stringify(isBinary) });
@@ -60,54 +60,74 @@ export const AnswerNongradableQuestion = ({ section, showFooterControls = true }
 
   return (
     <form onSubmit={formik.handleSubmit}>
-      {
-        section.binary && (
-          <>
-            <h3 className="mb-2 font-bold capitalize text-sm md:text-base lg:text-lg">{section.question}</h3>
-            <RadioGroup
-              defaultValue="false"
-              orientation="horizontal"
-              className="w-full flex items-center justify-center py-4"
-              onValueChange={(value) => setIsBinary(JSON.parse(value))}
+      {section.binary && (
+        <>
+          <h3 className="mb-2 font-bold capitalize text-sm md:text-base lg:text-lg">
+            {section.question}
+          </h3>
+          <RadioGroup
+            defaultValue="false"
+            orientation="horizontal"
+            className="w-full flex items-center justify-center py-4"
+            onValueChange={(value) => setIsBinary(JSON.parse(value))}
+          >
+            <Radio value="false">No</Radio>
+            <Radio value="true">Si</Radio>
+          </RadioGroup>
+        </>
+      )}
+      {section.type === "nongradable" &&
+        isBinary &&
+        section.questions?.map(
+          ({ id, name, type_question, question_options }) => (
+            <div
+              className="my-10 text-center items-center justify-center"
+              key={id}
             >
-              <Radio value="false">No</Radio>
-              <Radio value="true">Si</Radio>
-            </RadioGroup>
-          </>
-        )
-      }
-      {
-        (section.type === 'nongradable' && isBinary) && section.questions?.map(({ id, name }) => (
-          <div className="my-10" key={id}>
-            <p className="font-bold">{name}</p>
-            <span>
+              <p className="font-bold">{name}</p>
+              <span>
               <RadioGroup
                 color="primary"
                 orientation="horizontal"
-                onValueChange={(value: string) => handleChangeOptionValue(formik, value, id)}
-                name={`question_id_${id}`}
-                isInvalid={formik.touched[`question_id_${id}`] && formik.errors[`question_id_${id}`] ? true : false}
-                errorMessage={formik.touched[`question_id_${id}`] && formik.errors[`question_id_${id}`] && formik.errors[`question_id_${id}`]}
-                value={formik.values[`question_id_${id}`]}
+                className="w-full items-center justify-between py-4"
+                onValueChange={(value: string) => handleChangeOptionValue(formik, value, id, type_question )}
+                name={ type_question != 'closed' ? `question_id_${id}` : `question_closed_id_${id}`}
+                isInvalid={formik.touched[type_question != 'closed' ? `question_id_${id}` : `question_closed_id_${id}`] && formik.errors[type_question != 'closed' ? `question_id_${id}` : `question_closed_id_${id}`] ? true : false}
+                errorMessage={formik.touched[type_question != 'closed' ? `question_id_${id}` : `question_closed_id_${id}`] && formik.errors[type_question != 'closed' ? `question_id_${id}` : `question_closed_id_${id}`] && formik.errors[type_question != 'closed' ? `question_id_${id}` : `question_closed_id_${id}`]}
+                value={formik.values[type_question != 'closed' ? `question_id_${id}` : `question_closed_id_${id}`]}
                 isRequired
               >
-                <Radio value="true">Si</Radio>
-                <Radio value="false">No</Radio>
-              </RadioGroup>
-            </span>
-          </div>
-        ))
-      }
-      {
+                  <div className="grid justify-center grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {type_question === "closed" &&
+                      question_options?.map(({ id, opcion }) => (
+                        <div key={id} className="flex justify-center">
+                          <Radio value={id} className="flex justify-center">
+                            {opcion}
+                          </Radio>
+                        </div>
+                      ))}
+                    {type_question === "open" && (
+                      <div className="flex justify-center">
+                        <Radio value="true">Sí</Radio>
+                        <Radio value="false">No</Radio>
+                      </div>
+                    )}
+                  </div>
+                </RadioGroup>
+              </span>
+            </div>
+          )
+        )}
 
-        showFooterControls && (
-          <FooterControls
-            handlePreviousStep={handlePreviousStep}
-            currentPage={(section.canFinishGuide && !isBinary) ? totalQuestions! : currentPage!}
-            totalItems={totalQuestions!}
-          />
-        )
-      }
+      {showFooterControls && (
+        <FooterControls
+          handlePreviousStep={handlePreviousStep}
+          currentPage={
+            section.canFinishGuide && !isBinary ? totalQuestions! : currentPage!
+          }
+          totalItems={totalQuestions!}
+        />
+      )}
     </form>
-  )
+  );
 }

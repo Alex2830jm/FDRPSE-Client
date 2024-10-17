@@ -20,10 +20,12 @@ export interface QuestionsBySection {
 }
 
 export interface QuestionsInsideSection {
-    id              : number;
-    name            : string;
-    sectionId      : number;
-    qualification   : Qualification;
+    id                   : string;
+    name                 : string;
+    sectionId            : number;
+    qualification        : Qualification;
+    type_question        : string;
+    question_options    ?: Array<QuestionOptions>;
 }
 
 export interface Qualification {
@@ -34,4 +36,9 @@ export interface Qualification {
     sometimes_op: string;
     almost_never_op: string;
     never_op: string;
+}
+
+export interface QuestionOptions {
+    id: string,
+    opcion: string
 }
