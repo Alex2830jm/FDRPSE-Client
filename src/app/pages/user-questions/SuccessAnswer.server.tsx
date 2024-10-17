@@ -53,7 +53,7 @@ export const SuccessAnswer = () => {
         )}
       />
       <img
-        src="/cuestionario/public/assets/completed.svg"
+        src="/cuestionario_prueba/public/assets/completed.svg"
         alt="Completed-icon"
         width={300}
         height={300}

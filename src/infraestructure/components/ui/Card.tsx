@@ -19,7 +19,7 @@ export const Card = ({ title, subtitle, image, onPress, item }: CreateItemCardPr
                             alt={title}
                             className="w-full h-full"
                             height={600}
-                            src={typeof image === 'string' ? image : '/cuestionario/public/assets/cat.svg'}
+                            src={typeof image === 'string' ? image : '/cuestionario_prueba/public/assets/cat.svg'}
                             //src={typeof image === 'string' ? image : '/assets/cat.svg'}
                             width={500}
                             loading="lazy" />

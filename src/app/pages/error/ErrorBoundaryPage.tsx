@@ -6,7 +6,7 @@ export const ErrorBoundaryPage = () => {
     <Layout>
       <section className="w-full flex flex-col justify-center items-center">
         <img
-          src="/cuestionario/public/assets/NotFound.svg"
+          src="/cuestionario_prueba/public/assets/NotFound.svg"
           //src="/assets/NotFound.svg"
           width={400}
           height={400}

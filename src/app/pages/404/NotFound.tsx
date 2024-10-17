@@ -11,7 +11,7 @@ export const NotFound = () => {
             <div className="w-full grid-cols-1 md:grid md:grid-cols-2 flex items-center justify-center">
                 <div className="w-full hidden md:block">
                     <img
-                        src="/cuestionario/public/assets/NotFound.svg"
+                        src="/cuestionario_prueba/public/assets/NotFound.svg"
                         width={700}
                         height={600}
                         alt="Build"

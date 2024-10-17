@@ -20,8 +20,8 @@ apiInstance.interceptors.request.use(
 apiInstance.interceptors.response.use(
     async response => response,
     error => {
-        if (window.location.pathname !== "/cuestionario/" && error.request.status === 401) {
-            window.location.replace("/cuestionario/")
+        if (window.location.pathname !== "/cuestionario_prueba/" && error.request.status === 401) {
+            window.location.replace("/cuestionario_prueba/")
         }
         return Promise.reject(error);
     }
