@@ -8,7 +8,7 @@ interface SectionQuestionsSchema extends SectionSchema {
 
 export type TypeQuestion = 'gradable' | 'nongradable';
 interface Question {
-    id: number;
+    id: string;
     name: string;
     categoryId: number | null,
     sectionId: number,
@@ -17,12 +17,14 @@ interface Question {
     dimensionId: number;
     qualification: Qualification,
     type: TypeQuestion;
+    type_question: string;
 }
 export class SectionQuesions extends Section implements SectionQuestionsSchema {
 
     readonly questions?: Question[];
 
-    constructor(id: number, name: string, question: string | null, binary: boolean, questionCount: number | null, canFinishGuide: boolean |  undefined, type: TypeQuestion, createdAt: string, updatedAt: string, questions: Array<QuestionInsideSection>) {
+    constructor(id: number, name: string, question: string | null, binary: boolean, questionCount: number | null, canFinishGuide: boolean |  undefined, type: TypeQuestion,
+        createdAt: string, updatedAt: string, questions: Array<QuestionInsideSection>) {
         super(id, name, question, binary, questionCount, canFinishGuide, type, createdAt, updatedAt);
         this.questions = questions.map((question) => ({
             id: question.id,
@@ -32,7 +34,8 @@ export class SectionQuesions extends Section implements SectionQuestionsSchema {
             domainId: question.domain_id,
             dimensionId: question.dimension_id,
             qualification: { ...question.qualification, createdAt: new Date, updatedAt: new Date },
-            type: question.type
+            type: question.type,
+            type_question: question.type_question,
         }))
     }
 

@@ -2,13 +2,14 @@ import { Fragment, useEffect, useState } from 'react';
 import { surveyService } from '../../../domain/services/survey.service';
 import { LoadingScreen, PageLayout } from '../../../infraestructure/components/ui';
 import { useParams } from 'react-router-dom';
-import { Autocomplete, AutocompleteItem, Button, Chip, Skeleton, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip, User, useDisclosure } from '@nextui-org/react';
+import { Autocomplete, AutocompleteItem, AutocompleteSection, Button, Chip, Skeleton, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip, User, useDisclosure } from '@nextui-org/react';
 import { BuildingComunity, ChartIcon, ClearAllIcon, DownloadIcon, EyeIcon, FileSpreadSheet, XIcon } from '../../../infraestructure/components/icons';
 import { areaService } from '../../../domain/services/area.service';
 import { guideService } from '../../../domain/services/guide.service';
 import { useDebounce } from '../../hooks/useDebounce';
 import { Modal } from '../../../infraestructure/components/ui/Modal';
 import { UserDetails } from '../../../infraestructure/components/survey/UserDetails';
+import { questionService } from '../../../domain/services/question.service';
 
 export const SurveyGuideDetailAverage = () => {
 
@@ -24,6 +25,7 @@ export const SurveyGuideDetailAverage = () => {
 
   const { startSearchGuideSurveyUserDetailOption, guideUserSurvey, getAverageSurveyGuide, average, loading, startDownloadReportBy, startDownloadReportByOptions } = surveyService();
   const { startLoadAreasFilter, areas, startLoadSubAreasFilter, subareas } = areaService();
+  const { starLoadOptionsFilterOne, options, startLoadOptionsDifferent, optionsD, starLoadQuestionsClosed, questionsClosed } = questionService();
   const { startGetGuideBySurvey, guide, clearGuide } = guideService();
 
   const debounce = useDebounce(query, 500);
@@ -32,6 +34,7 @@ export const SurveyGuideDetailAverage = () => {
     Promise.all([
       startGetGuideBySurvey(id!, guideId!),
       startLoadAreasFilter(id!, guideId!),
+      starLoadQuestionsClosed(),
     ])
     return () => {
       clearGuide();
@@ -58,6 +61,18 @@ export const SurveyGuideDetailAverage = () => {
     setQueryArea(areaId);
     setQuerySubArea('');
     await startLoadSubAreasFilter(areaId, id!, guideId!);
+  }
+
+  const handleSearchChangeOption = async (subareaId: string) => {
+    setQuerySubArea(subareaId);
+    setQueryOption1('');
+    await starLoadOptionsFilterOne(id!, subareaId);
+  }
+
+  const handleSearchChangeOptions = async (option: string) => {
+    setQueryOption1(option);
+    setQueryOption2('');
+    await startLoadOptionsDifferent(option)
   }
 
   const handleClearSearch = () => {
@@ -210,7 +225,7 @@ export const SurveyGuideDetailAverage = () => {
               label="Buscar por área"
               className="z-0 md:col-span-2 lg:col-span-1"
               startContent={<BuildingComunity />}
-              onSelectionChange={(key) => setQuerySubArea(key as string || '')}
+              onSelectionChange={(key) => handleSearchChangeOption(key as string || '')}
               selectedKey={querySubArea}
             >
               {subareas?.map(({ id, name, percentage }) => (
@@ -224,7 +239,44 @@ export const SurveyGuideDetailAverage = () => {
               ))}
             </Autocomplete>
           )}
-
+          {((queryArea && subareas.length === 0) || (queryArea && querySubArea)) && ( 
+            <Autocomplete
+              label="Sexo"
+              className='z-0'
+              startContent={<BuildingComunity/>}
+              onSelectionChange={(key) => handleSearchChangeOptions(key as string || '')}
+              selectedKey={queryOption1}
+            >
+              {options.map(({id, opcion, countUsers}) => (
+                <AutocompleteItem
+                  key={id}
+                  value={id}
+                  startContent={
+                    <Chip isDisabled size='sm' variant='solid' className='bg-black text-white'>{countUsers}</Chip>
+                  }
+                >{opcion}</AutocompleteItem>
+              ))}
+            </Autocomplete>              
+          )}
+          {(queryOption1 && optionsD.length > 0) && (
+            <Autocomplete
+              label="Filtro de Trabajadores"
+              className='z-0 md:col-span-2 lg:col-span-1'
+              startContent={<BuildingComunity />}
+              onSelectionChange={(key) => setQueryOption2(key as string || '')}
+              selectedKey={queryOption2}
+            >
+              {questionsClosed.filter(question => question.name !== 'Selecciona tu sexo').map(({id, name}) =>
+                <AutocompleteSection showDivider key={id} title={name}>
+                  {optionsD.filter(optionsD => optionsD.questions_id === id).map(({id, opcion}) => (
+                    <AutocompleteItem key={id} value={id}>
+                      {opcion}
+                    </AutocompleteItem>
+                  ))}
+                </AutocompleteSection>
+              )}
+            </Autocomplete>
+          )}
         </div>
 
 

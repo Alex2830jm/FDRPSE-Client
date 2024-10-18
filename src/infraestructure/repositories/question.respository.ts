@@ -1,9 +1,10 @@
 import { http } from '../http/http';
-import { Question, QuestionPagination } from '../../domain/models';
-import { CreateQuestionDto, QuestionPaginationResponseDto, QuestionResponseDto, QuestionsBySectionResponse, SaveUserQuestionDto } from '../http/dto/questions';
+import { Question, QuestionOptions, QuestionPagination, QuestionsOpt } from '../../domain/models';
+import { CreateQuestionDto, QuestionPaginationResponseDto, QuestionResponseDto, QuestionsBySectionResponse, QuestionsClosedResponseDto, SaveUserQuestionDto } from '../http/dto/questions';
 import { CommonResponseDto } from '../http/dto/CommonResponseDto';
 import { errorAlert, succesAlert } from '../alert/alerts';
 import { TypeQuestion } from '../../domain/models/SectionQuestions';
+import { QuestionOptionsDto } from '../http/dto/options';
 
 export const questionRepository = {
 
@@ -67,5 +68,44 @@ export const questionRepository = {
     },
 
 
+    //Petición que carga la preguntas con sus opciones y realiza el contenio de usuarios
+    getOptionsFilterOne: async (surveyId: string, subareaId: string): Promise<Array<QuestionOptions> | string> => {
+        try {
+            const { options } = await http.get<QuestionOptionsDto>(`/auth/options/filterOne?surveyId=${surveyId}&subareaId=${subareaId}`);
+            return options.map(({id, opcion, questions_id, countUsers}) => ({
+                id, 
+                opcion: opcion,
+                questions_id: questions_id,
+                countUsers: countUsers,
+            }));
+        } catch (error) {
+            return error as string;
+        }
+    },
+
+    getQuestionsClosed: async (): Promise<Array<QuestionsOpt> | string> => {
+        try {
+            const { questionsClosed } = await http.get<QuestionsClosedResponseDto>(`auth/options/questions_closed`);            
+            return questionsClosed.map(({id, name}) => ({
+                id,
+                name: name
+            }))
+        } catch (error) {
+            return error as string;
+        }
+    },
+
+    getOptionsDifferent: async (option: string): Promise<Array<QuestionOptions> | string> => {
+        try {
+            const { options } = await http.get<QuestionOptionsDto>(`/auth/options/different?option=${option}`);
+            return options.map(({id, opcion, questions_id }) => ({
+                id,
+                opcion: opcion,
+                questions_id: questions_id
+            }))
+        } catch (error) {
+            return error as string;
+        }
+    },
 
 }

@@ -12,7 +12,7 @@ export interface SectionWithQuestions extends SectionResponseDto {
 
 
 export interface QuestionInsideSection {
-    id: number;
+    id: string;
     name: string;
     category_id: number | null;
     section_id: number;
@@ -23,4 +23,5 @@ export interface QuestionInsideSection {
     updated_at: string;
     deleted_at: string;
     type: TypeQuestion;
+    type_question: string;
 }

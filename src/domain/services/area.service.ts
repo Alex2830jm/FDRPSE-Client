@@ -25,7 +25,6 @@ export const areaService = () => {
 
     const startLoadSubAreasFilter = async (areaId: string, surveyId: string, guideId: string) => {
         const areas = await areaRepository.getSubAreasByAreaFilter(areaId, surveyId, guideId);
-        console.log(areas)
         typeof areas !== "string" &&
           dispatch({ type: "AREA - Get subareas by areas", payload: areas });
     };

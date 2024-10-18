@@ -4,3 +4,4 @@ export type { QuestionsBySectionResponse } from './QuestionsBySectionResponse';
 export type { QuestionsResponseDto } from './QuestionsResponseDto';
 export type { SaveUserQuestionDto } from './SaveUserQuestionDto';
 export type { QuestionPaginationResponseDto } from './QuestionPaginationResponseDto';
+export type { QuestionsClosedResponseDto } from './QuestionsClosedResponseDto'

@@ -66,14 +66,14 @@ export const AnswerQuestionForm = ({ questions, hasSubquestions, showFooterContr
       }
       {
         (isBinary) && (
-          questions?.map(({ id, name, qualification }) => (
+          questions?.map(({ id, name, type_question, qualification }) => (
             <div className="my-10" key={id}>
               <p className="font-bold">{name}</p>
               <span>
                 <RadioGroup
                   color="primary"
                   orientation="horizontal"
-                  onValueChange={(value: string) => handleChangeOptionValue(formik, +value, id)}
+                  onValueChange={(value: string) => handleChangeOptionValue(formik,value, id, type_question)}
                   name={`question_id_${id}`}
                   isInvalid={formik.touched[`question_id_${id}`] && formik.errors[`question_id_${id}`] ? true : false}
                   errorMessage={formik.touched[`question_id_${id}`] && formik.errors[`question_id_${id}`] && formik.errors[`question_id_${id}`]}

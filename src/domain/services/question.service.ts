@@ -5,10 +5,14 @@ import type { CreateQuestionDto, SaveUserQuestionDto } from '../../infraestructu
 import { QuestionsField } from '../../app/helpers/createFieldsQuestionValidations';
 import { useNavigation } from '../../app/hooks/useNavigation';
 import { TypeSaveAnswer } from '../../infraestructure/http/dto/questions/SaveUserQuestionDto';
+import { QuestionOptions, QuestionsOpt } from '../models';
 
 export const questionService = () => {
 
     const { dispatch, questions, question, sectionQuestions, totalQuestions, currentPage, questionsPagination } = useContext(QuestionContext);
+    const [options, setOptions] = useState<Array<QuestionOptions>>([]);
+    const [optionsD, setOptionsD] = useState<Array<QuestionOptions>>([]);
+    const [questionsClosed, setQuestionsClosed] = useState<Array<QuestionsOpt>>([]);
 
     const [loading, setLoading] = useState(false);
     const { navigate } = useNavigation();
@@ -85,6 +89,22 @@ export const questionService = () => {
     const clearNewQuestionCache = () => dispatch({ type: 'QUESTION - Clear new Question Cache' });
 
 
+    const starLoadOptionsFilterOne = async (surveyId: string, subareaId: string) => {
+        const options = await questionRepository.getOptionsFilterOne(surveyId, subareaId);
+        typeof options !== 'string' && setOptions(options);
+    }
+
+    const startLoadOptionsDifferent = async (option: string) => {
+        const optionsD = await questionRepository.getOptionsDifferent(option);
+        typeof optionsD !== 'string' && setOptionsD(optionsD);        
+    }
+
+    const starLoadQuestionsClosed = async () => {   
+        const questionsClosed = await questionRepository.getQuestionsClosed();
+        typeof questionsClosed !== 'string' && setQuestionsClosed(questionsClosed)
+        
+    }
+
     return {
         loading,
         questions,
@@ -93,6 +113,9 @@ export const questionService = () => {
         questionsPagination,
         totalQuestions,
         currentPage,
+        options,
+        optionsD,
+        questionsClosed,
         toggleLoading,
         startGetQuestions,
         startCreateQuestion,
@@ -102,5 +125,8 @@ export const questionService = () => {
         saveQuestionNongradableUser,
         startGetQuestionsBySection,
         clearNewQuestionCache,
+        starLoadOptionsFilterOne,
+        startLoadOptionsDifferent,
+        starLoadQuestionsClosed
     }
 }
