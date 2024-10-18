@@ -57,6 +57,7 @@ export { SectionIcon } from './SectionIcon';
 export { SquareRoundedX } from './SquareRoundedX';
 export { StarsIcon } from './StarsIcon';
 export { StarsOff } from './StarsOff';
+export { StatisticsIcon } from './StatisticsIcon';
 export { TimeLine } from './TimeLine';
 export { TrashIcon } from './TrashIcon';
 export { UserIcon } from './UserIcon';

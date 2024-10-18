@@ -10,4 +10,6 @@ interface AreaElement {
     users_count:    number;
     subdirections?: AreaElement[];
     departments?:   AreaElement[];
+    percentage?:    number;
+    average?:       number;
 }

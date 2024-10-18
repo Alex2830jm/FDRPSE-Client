@@ -6,6 +6,7 @@ import { CommonResponseDto } from '../http/dto/CommonResponseDto';
 import { FinalizeCurrentGuideResponseDto, GuideUserSurveyResponseDto, StartNewSurveyDto, StartNewSurveyResonseDto, SurveyResponseDto, SurveysPaginationResponseDto, TotalUsersResponseDto } from '../http/dto/surveys';
 import { AreasResponseDto } from '../http/dto/areas';
 import { GuideSurveyUserDetailDto, GuideUserResponseDto, OneGuideResponseDto } from '../http/dto/guide';
+import { TotalSurveyResponseDto } from '../http/dto/surveys/TotalSurveyResponseDto';
 
 export const surveyRepository = {
     startGetSurveys: async (page = 1): Promise<Pagination | string> => {
@@ -19,6 +20,16 @@ export const surveyRepository = {
             }
 
         } catch (error) {
+            return error as string;
+        }
+    },
+
+    //Petición para obtener el promedio de un cuestionario
+    averageGuide: async (surveyId: string, guideId: string): Promise<number | string> => {
+        try {
+            const { average } = await http.get<TotalSurveyResponseDto>(`/auth/surveys/${surveyId}/guide/${guideId}/average`);
+            return average;
+        } catch ( error ) {
             return error as string;
         }
     },
@@ -115,6 +126,32 @@ export const surveyRepository = {
                     area: {
                         id: guide.user.area.id,
                         name: guide.user.area.nombreArea,
+                    }
+                }
+            }));
+        } catch (error) {
+            return error as string;
+        }
+    },
+
+    //Petición que muestra a los usuarios de los respectivos filtros de búsqueda
+    searchInGuideSurveyUserDetailOptions: async (surveyId: string, guideId: string, option1 = '', option2 = '', areaId = '', subareaId = ''): Promise<Array<GuideUserSurvey> | string> => {
+        try {
+            const { survey } = await http.get<GuideUserSurveyResponseDto>(`/auth/surveys/${surveyId}/guide/${guideId}/options?option1=${option1}&option2=${option2}&area=${areaId}&subarea=${subareaId}`);
+            return survey.map((guide) => ({
+                ...guide,
+                createdAt: new Date(guide.created_at),
+                updatedAt: new Date(guide.updated_at),
+                userId: guide.user_id,
+                guideId: guide.guide_id,
+                surveyId: guide.survey_id,
+                user: {
+                    id: guide.user.id,
+                    name: guide.user.nombre,
+                    lastName: `${guide.user.apellidoP} ${guide.user.apellidoM}`,
+                    area: {
+                        id: guide.user.area.id,
+                        name: guide.user.area.nombreArea
                     }
                 }
             }));
@@ -287,8 +324,16 @@ export const surveyRepository = {
             errorAlert(error as string);
             return { success: false, message: error as string };
         }
-    }
-
-
+    },
+    
+    downloadSurveyGuideOptions: async (surveyId: string, guideId: string, userId: string, subareaId = '', option1 = '', option2 = ''): Promise<CommonResponseDto> => {
+        try {
+            await http.download(`/auth/surveys/${surveyId}/guide/${guideId}/report_average/${userId}?subareaId=${subareaId}&option1=${option1}&option2=${option2}`)
+            return { success: true, message: '' };
+        } catch (error) {
+            errorAlert(error as string);
+            return { success: false, message: error as string };
+        }
+    },
 
 }

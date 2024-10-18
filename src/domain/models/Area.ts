@@ -7,6 +7,8 @@ export interface Area {
     usersCount:     number;
     subdirections?: Area[];
     departments?:   Area[];
+    percentage?:    number;
+    average?:       number;
 }
 
 

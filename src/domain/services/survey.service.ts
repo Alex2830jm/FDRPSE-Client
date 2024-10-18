@@ -12,6 +12,7 @@ export const surveyService = () => {
 
     const [loading, setLoading] = useState(false);
     const [areas, setAreas] = useState<Array<Area>>([]);
+    const [average, setAverage] = useState<number>();
     const navigate = useNavigate();
     const { dispatch, surveys, hasSurvey, guideUserSurvey, users, userDetail, totalUsersInSurvey, survey } = useContext(SurveyContext);
     const { dispatch: dispatchGuide } = guideService();
@@ -82,6 +83,18 @@ export const surveyService = () => {
         toggleLoading();
     }
 
+    const startSearchGuideSurveyUserDetailOption = async (surveyId: string, guideId: string, option1 = '', option2 = '', areaId = '', subareaId = '') => {
+        toggleLoading();
+        const response = await surveyRepository.searchInGuideSurveyUserDetailOptions(surveyId, guideId, option1, option2, areaId, subareaId);
+        typeof response !== 'string' && dispatch({ type: 'SURVEY - Get survey guide detail', payload: response });
+        toggleLoading();
+    }
+
+    const getAverageSurveyGuide = async (surveyId: string, guideId: string) => {
+        const average = await surveyRepository.averageGuide(surveyId, guideId);
+        typeof average === 'number' && setAverage(average);
+    }
+
     const getTotalUsersInSurvey = async () => {
         const response = await surveyRepository.getTotalUsers();
         typeof response === 'number' && dispatch({ type: 'SURVEY - Get total users', payload: response });
@@ -144,6 +157,12 @@ export const surveyService = () => {
         toggleLoading();
     }
 
+    const startDownloadReportByOptions = async (surveyId: string, guideId: string, userId:string, subareaId = '', option1 = '', option2 = '') => {
+        toggleLoading();
+        await surveyRepository.downloadSurveyGuideOptions(surveyId, guideId, userId, subareaId, option1, option2);
+        toggleLoading();
+    }
+
     return {
         loading,
         surveys,
@@ -154,6 +173,7 @@ export const surveyService = () => {
         users,
         totalUsersInSurvey,
         userDetail,
+        average,
         startGetSurveys,
         startShowSurvey,
         startNewSurvey,
@@ -170,8 +190,11 @@ export const surveyService = () => {
         getGuideSurveyUserDetail,
         startGuide,
         startSearchGuideSurveyUserDetail,
+        startSearchGuideSurveyUserDetailOption,
+        getAverageSurveyGuide,
         startPausedOrContinueGuide,
         startDownloadReportBy,
+        startDownloadReportByOptions,
     }
 
 }

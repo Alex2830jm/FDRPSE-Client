@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { AlertConfirm, PageLayout } from '../../../infraestructure/components/ui';
 import { surveyService } from '../../../domain/services/survey.service';
 import { Button, Chip, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, useDisclosure } from '@nextui-org/react';
-import { CheckIcon, CircleCheck, EyeIcon, FileDescription, InfoCircle, PausePlayer, PlayerPlay, StarsIcon, StarsOff } from '../../../infraestructure/components/icons';
+import { CheckIcon, CircleCheck, EyeIcon, FileDescription, InfoCircle, PausePlayer, PlayerPlay, StarsIcon, StarsOff, StatisticsIcon } from '../../../infraestructure/components/icons';
 
 import { useNavigation } from '../../hooks/useNavigation';
 import { Guide, StatusGuide } from '../../../domain/models';
@@ -69,7 +69,7 @@ export const ShowSurveyPage = () => {
               <TableBody loadingContent={<Spinner color="success" />} isLoading={loading}>
                 {
                   survey?.guides?.map((guide, index) => (
-                    <TableRow key={`date-key-${id}-${name}`}>
+                    <TableRow key={`date-key-${guide.id}`}>
                       <TableCell>{index + 1}</TableCell>
                       <TableCell className="text-xs">{guide.name}</TableCell>
                       <TableCell>{guide.createdAt.toLocaleDateString()}</TableCell>
@@ -110,6 +110,36 @@ export const ShowSurveyPage = () => {
                               </span>}>
                             Ver
                           </Button>
+                          {guide.gradable ? (
+                            <Button 
+                              onClick={() => navigate(`detail/${guide.id}/averages`)}
+                              className='bg-slate-800 text-white text-xs h-9 font-bold'
+                              endContent={
+                                <span className='bg-white text-slate-800 rounded p-[1.2px]'>
+                                  <StatisticsIcon
+                                    width={15}
+                                    height={15}
+                                    strokeWidth={2}
+                                  />
+                                </span>
+                              }
+                              > Ver Promedios </Button>
+                          ): (
+                            <Chip
+                              className="capitalize"
+                              startContent={
+                                <span className="text-yellow-600 bg-yellow-300/20 rounded-full p-[2px] flex items-center justify-center">
+                                  <StarsOff width={15} height={15} />
+                                </span>
+                              }
+                              classNames={{
+                                base: "bg-yellow-500/10",
+                                content: "font-bold text-xs",
+                              }}
+                              size="sm"
+                              variant="solid"
+                            > No es evaluativo </Chip>
+                          )}
                           {
                             (guide.status === StatusGuide.inProgress) && (
                               <Fragment>
