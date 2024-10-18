@@ -93,6 +93,44 @@ export const FormNameAndTypeGuide = forwardRef<ValidateStep>((__, ref: Forwarded
                         />
                     </RadioGroupStyled>
                 </div>
+                {/* {formik.values.gradable == true && (
+                    <div className='my-10'>
+                        <span className='my-10'>
+                            <p className='font-bold'>Filtro de Resultados</p>
+                            <p className='text-gray-500 font-bold text-xs pl-4'>¿Las preguntas del cuestionario se podrán usar como filtros de búsqueda?</p>
+                        </span>
+                        <Switch 
+                            classNames={{
+                                base: cn(
+                                    "inline-flex flex-row-reverse w-full items-center my-4",
+                                    "justify-between cursor-pointer rounded-lg gap-2 p-4 border-2 border-transparent w-full",
+                                    "data-[selected=true]:border-emerald-500",
+                                ),
+                                wrapper: "p-0 h-4 overflow-visible group-data-[selected]:bg-emerald-600",
+                                thumb: cn(
+                                    "w-6 h-6 border-2 shadow-lg",
+                                    "group-data-[hover=true]:border-emerald-600",
+                                    //selected
+                                    "group-data-[selected=true]:ml-6 bg-emerald-500",
+                                    // pressed
+                                    "group-data-[pressed=true]:w-7",
+                                    "group-data-[selected]:group-data-[pressed]:ml-4  group-data-[selected]:bg-emerald-500",
+                                ),
+                            }}
+                            name='guide_filter'
+                            onChange={formik.handleChange}
+                            value={`${formik.values.guide_filter}`}
+                            isSelected={formik.values.guide_filter}
+                        >
+                            <div className='flex flex-col gap-1 w-full'>
+                                <p className='text-medium text-bold font-bold'>
+                                    Si el cuestionario cuena con preguntas con opción multiple, las opciones
+                                    se pueden ocupar para filtros en sus usos requeridos
+                                </p>
+                            </div>
+                        </Switch>
+                    </div>  
+                )} */}
             </form >
         </div >
     )
