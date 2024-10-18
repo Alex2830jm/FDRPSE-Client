@@ -51,7 +51,7 @@ export const ReviewQuestion = forwardRef<ValidateStep>((__, ref: ForwardedRef<Va
                 <div className="flex items-center [&>svg]:mr-2 relative my-2 shadow-lg py-6 rounded-lg w-full min-h-[8rem]">
                   <span className="absolute -left-3 w-14 h-10 bg-emerald-600 inset-y-1/3 shadow-xl flex items-center justify-center text-white rounded-lg"><ListOptionIcon /></span>
                   <div className="flex flex-col justify-center ml-14 w-full">
-                    {question?.question_options?.map(( opcion, index ) => (
+                    {question?.question_options?.map(( {opcion}, index ) => (
                       <span key={index}>{opcion}</span>
                     ))}
                   </div>

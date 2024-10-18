@@ -31,6 +31,19 @@ export const ShowQuestionPage = () => {
             </div>
           )
         }
+        {(question?.question_options && question.question_options.length > 0) && (
+          <>
+            <h3 className='my-5 text-2xl font-bold text-emerald-600'>Opciones de la pregunta</h3>
+            <div className='grid grid-col-1 md:grid-cols- lg:grid-cols-3 xl:grid-cols-4 gap-8'>
+              {question.question_options.map(( {opcion}, index) => (
+                <div key={index} className="block max-w-sm p-6 bg-white rounded-md shadow justify-center text-center hover:border-emerald-600 border-2 border-y-8 hover:transition-all hover:ease-in-out hover:duration-1000 hover:shadow-emerald-600/20 shadow-lg overflow-hidden break-words px-3 hover:scale-[1.03]">
+                  <h5 className="mb-2 text-lg font-bold tracking-tight text-gray-500">{opcion}</h5>
+                  <p className="mb-2 text-base text-gray-400">Opción</p>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
         <div>
           <h3 className="my-5 text-2xl font-bold text-emerald-600">Detalles</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">

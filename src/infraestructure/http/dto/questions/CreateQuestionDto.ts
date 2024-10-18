@@ -1,4 +1,5 @@
 import { TypeQuestion } from '../../../../domain/models/SectionQuestions';
+import { QuestionOptionResponseDto } from '../options';
 
 export interface CreateQuestionDto {
     name                 : string;
@@ -9,7 +10,7 @@ export interface CreateQuestionDto {
     dimension_id        ?: string;
     qualification_id    ?: string;
     section_id           : number;
-    question_options    ?: Array<string>;
+    question_options    ?: Array<QuestionOptionResponseDto>;
 }
 
 

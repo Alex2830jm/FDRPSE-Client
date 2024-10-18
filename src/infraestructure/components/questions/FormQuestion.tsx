@@ -37,7 +37,8 @@ export const FormQuestion = forwardRef<ValidateStep>((__, ref: ForwardedRef<Vali
         {
             name: question?.name || '', type: question?.type || 'gradable',
             type_question: question?.type_question || '',
-            question_options: question?.question_options || [],
+            //question_options: question?.question_options || [],
+            question_options: question?.question_options?.map(({opcion}) => opcion) || question?.question_options || [],
             category_id: '',
             domain_id: '',
             dimension_id: question?.dimension?.id || '',
@@ -46,7 +47,7 @@ export const FormQuestion = forwardRef<ValidateStep>((__, ref: ForwardedRef<Vali
         },
         validationSchema: Yup.object(createQuestionValidation()),
         onSubmit: (data) => {
-            console.log(data),
+            //console.log(data),
             preSaveQuestion({
                 ...data,
                 section_id: +(data.section_id),
@@ -62,7 +63,12 @@ export const FormQuestion = forwardRef<ValidateStep>((__, ref: ForwardedRef<Vali
                         id: +formik.values.domain_id,
                         qualification_id: selectedItem.find(item => item.type === 'domains')?.qualificationId,
                     }
-                })
+                }),
+                question_options: formik.values.question_options?.map((option) => ({
+                    id: '', 
+                    questions_id: '', 
+                    opcion: typeof option === 'string' ? option : option.opcion,
+                })),
             })
         },
     });
