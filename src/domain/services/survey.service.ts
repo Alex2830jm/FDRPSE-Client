@@ -83,9 +83,9 @@ export const surveyService = () => {
         toggleLoading();
     }
 
-    const startSearchGuideSurveyUserDetailOption = async (surveyId: string, guideId: string, option1 = '', option2 = '', areaId = '', subareaId = '') => {
+    const startSearchGuideSurveyUserDetailOption = async (surveyId: string, guideId: string, areaId = '', subareaId = '', option1 = '', option2 = '') => {
         toggleLoading();
-        const response = await surveyRepository.searchInGuideSurveyUserDetailOptions(surveyId, guideId, option1, option2, areaId, subareaId);
+        const response = await surveyRepository.searchInGuideSurveyUserDetailOptions(surveyId, guideId, areaId, subareaId, option1, option2);
         typeof response !== 'string' && dispatch({ type: 'SURVEY - Get survey guide detail', payload: response });
         toggleLoading();
     }

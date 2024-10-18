@@ -247,7 +247,7 @@ export const SurveyGuideDetailAverage = () => {
               onSelectionChange={(key) => handleSearchChangeOptions(key as string || '')}
               selectedKey={queryOption1}
             >
-              {options.map(({id, opcion, countUsers}) => (
+              {options?.map(({id, opcion, countUsers}) => (
                 <AutocompleteItem
                   key={id}
                   value={id}
@@ -266,7 +266,7 @@ export const SurveyGuideDetailAverage = () => {
               onSelectionChange={(key) => setQueryOption2(key as string || '')}
               selectedKey={queryOption2}
             >
-              {questionsClosed.filter(question => question.name !== 'Selecciona tu sexo').map(({id, name}) =>
+              {questionsClosed?.filter(question => question.name !== 'Selecciona tu sexo')?.map(({id, name}) =>
                 <AutocompleteSection showDivider key={id} title={name}>
                   {optionsD.filter(optionsD => optionsD.questions_id === id).map(({id, opcion}) => (
                     <AutocompleteItem key={id} value={id}>

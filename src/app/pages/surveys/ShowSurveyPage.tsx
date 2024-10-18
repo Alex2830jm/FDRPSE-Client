@@ -69,7 +69,7 @@ export const ShowSurveyPage = () => {
               <TableBody loadingContent={<Spinner color="success" />} isLoading={loading}>
                 {
                   survey?.guides?.map((guide, index) => (
-                    <TableRow key={`date-key-${guide.id}`}>
+                    <TableRow key={`date-key-${index}`}>
                       <TableCell>{index + 1}</TableCell>
                       <TableCell className="text-xs">{guide.name}</TableCell>
                       <TableCell>{guide.createdAt.toLocaleDateString()}</TableCell>

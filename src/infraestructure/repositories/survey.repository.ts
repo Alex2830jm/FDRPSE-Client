@@ -135,9 +135,9 @@ export const surveyRepository = {
     },
 
     //Petición que muestra a los usuarios de los respectivos filtros de búsqueda
-    searchInGuideSurveyUserDetailOptions: async (surveyId: string, guideId: string, option1 = '', option2 = '', areaId = '', subareaId = ''): Promise<Array<GuideUserSurvey> | string> => {
+    searchInGuideSurveyUserDetailOptions: async (surveyId: string, guideId: string, areaId = '', subareaId = '', option1 = '', option2 = '', ): Promise<Array<GuideUserSurvey> | string> => {
         try {
-            const { survey } = await http.get<GuideUserSurveyResponseDto>(`/auth/surveys/${surveyId}/guide/${guideId}/options?option1=${option1}&option2=${option2}&area=${areaId}&subarea=${subareaId}`);
+            const { survey } = await http.get<GuideUserSurveyResponseDto>(`/auth/surveys/${surveyId}/guide/${guideId}/options?areaId=${areaId}&subareaId=${subareaId}&option1=${option1}&option2=${option2}`);
             return survey.map((guide) => ({
                 ...guide,
                 createdAt: new Date(guide.created_at),
