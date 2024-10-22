@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 import { surveyService } from '../../../domain/services/survey.service';
 import { LoadingScreen, PageLayout } from '../../../infraestructure/components/ui';
 import { useParams } from 'react-router-dom';
@@ -10,6 +10,7 @@ import { useDebounce } from '../../hooks/useDebounce';
 import { Modal } from '../../../infraestructure/components/ui/Modal';
 import { UserDetails } from '../../../infraestructure/components/survey/UserDetails';
 import { questionService } from '../../../domain/services/question.service';
+import { getNameOfQualification } from '../../helpers/transformDataToBarChart';
 
 export const SurveyGuideDetailAverage = () => {
 
@@ -51,7 +52,7 @@ export const SurveyGuideDetailAverage = () => {
     };
 
     fetchAverage();
-  })
+  });
 
   useEffect(() => {
     startSearchGuideSurveyUserDetailOption(id!, guideId!, queryArea, querySubArea, queryOption1, queryOption2);
@@ -61,11 +62,15 @@ export const SurveyGuideDetailAverage = () => {
     setQueryArea(areaId);
     setQuerySubArea('');
     await startLoadSubAreasFilter(areaId, id!, guideId!);
+    if(subareas.length <= 0) {
+      await starLoadOptionsFilterOne(id!, areaId);
+    }
   }
 
   const handleSearchChangeOption = async (subareaId: string) => {
     setQuerySubArea(subareaId);
     setQueryOption1('');
+
     await starLoadOptionsFilterOne(id!, subareaId);
   }
 
@@ -77,6 +82,8 @@ export const SurveyGuideDetailAverage = () => {
 
   const handleClearSearch = () => {
     setQuery('');
+    setQueryOption2('')
+    setQueryOption1('');
     setQuerySubArea('')
     setQueryArea('');
   }
@@ -87,20 +94,44 @@ export const SurveyGuideDetailAverage = () => {
       : 0;
   };
 
-  const rangeAverage = Number(average);
+  
+  const getAverage= useMemo(() => {
+    return getNameOfQualification ({
+      despicable: guide?.qualification?.despicable!,
+      low: guide?.qualification?.low!,
+      middle: guide?.qualification?.middle!,
+      high: guide?.qualification?.high!,
+      value: average!
+    })
+  }, [average, guide?.qualification]);
+  
+  const getNameByAverage = {
+    ['Despreciable o nulo']   : 'text-cyan-200',
+    ['Bajo']                  : 'text-green-300',
+    ['Medio']                 : 'text-yellow-200',
+    ['Alto']                  : 'text-orange-300',
+    ['Muy alto']              : 'text-red-400',
+    ['NA']                    : 'text-gray-600'
+  }
 
-  const despicable = rangeAverage < Number(guide?.qualification?.despicable);
-  const low = rangeAverage >= Number(guide?.qualification?.despicable) && Number(average) < Number(guide?.qualification?.low);
-  const middle = rangeAverage >= Number(guide?.qualification?.low) && Number(average) < Number(guide?.qualification?.middle);
-  const high = rangeAverage >= Number(guide?.qualification?.middle) && Number(average) <= Number(guide?.qualification?.high);
-  const veryhigh = rangeAverage >= Number(guide?.qualification?.veryHigh);
+  const getAverageFilter = useMemo(() =>{
+    return getNameOfQualification ({
+      despicable: guide?.qualification?.despicable!,
+      low: guide?.qualification?.low!,
+      middle: guide?.qualification?.middle!,
+      high: guide?.qualification?.high!,
+      value: promedioFiltrado()!
+    })
+  }, [promedioFiltrado(), guide?.qualification])
 
-  const despicableFilter = promedioFiltrado() < Number(guide?.qualification?.despicable);
-  const lowFilter = promedioFiltrado() >= Number(guide?.qualification?.despicable) && promedioFiltrado() < Number(guide?.qualification?.low);
-  const middleFilter = promedioFiltrado() >= Number(guide?.qualification?.low) && promedioFiltrado() < Number(guide?.qualification?.middle);
-  const highFilter = promedioFiltrado() >= Number(guide?.qualification?.middle) && promedioFiltrado() <= Number(guide?.qualification?.high);
-  const veryhighFilter = promedioFiltrado() >= Number(guide?.qualification?.veryHigh);
-
+  const getNameByAverageFilter = {
+    ['Despreciable o nulo']      : 'bg-cyan-200 border-cyan-400',
+    ['Bajo']      : 'bg-green-300 border-green-500',
+    ['Medio']     : 'bg-yellow-200 border-yellow-400',
+    ['Alto']      : 'bg-orange-300 border-orange-500',
+    ['Muy alto']  : 'bg-red-400 border-red-600',
+    ['NA']        : 'bg-gray-600'
+  }
   return (
     <PageLayout title="Detalle de cuestionario">
       <Fragment>
@@ -133,15 +164,11 @@ export const SurveyGuideDetailAverage = () => {
         { loading && (<LoadingScreen title="Cargando" />) }
         { guide ? (
           <h2 className="bg-gradient-to-r from-primary via-emerald-600 to-emerald-600 inline-block text-transparent lg:py-5 bg-clip-text text-xl lg:text-5xl font-bold">
-            {guide?.name}: {''}
-              <label className={`
-                ${despicable ? 'text-cyan-200' :
-                  low ? 'text-emerald-100' :
-                  middle ? 'text-yellow-300' :
-                  high ? 'text-orange-300' :
-                  veryhigh ? 'text-red-400' : ''
-                } inline-block text-transparent lg:py-5 bg-clip-text text-xl lg:text-5xl font-bold`}
-              > GPA { average } - 100 % </label>
+            {guide?.name}
+              {guide.gradable ? (
+                <label className={`${getNameByAverage[getAverage]} inline-block border-black lg:py-5 bg-clip-text text-xl lg:text-5xl font-bold`}
+              >: GPA { average } - 100 % </label>
+              ): null}
             </h2>
           ) : (
             <div className="mt-10 w-full h-[10rem]">
@@ -155,21 +182,11 @@ export const SurveyGuideDetailAverage = () => {
           {guide?.gradable ? (
             <div className="w-full">
               <div 
-                className={ `${ despicableFilter ? 'bg-cyan-200 border-cyan-400' : 
-                  lowFilter ? 'bg-green-300 border-green-500' : 
-                  middleFilter ? 'bg-yellow-200 border-yellow-400':
-                  highFilter ? 'bg-orange-300 border-orange-500' : 
-                  veryhighFilter ? 'bg-red-400 border-red-600 ' : ''
-                } border-t-4 rounded-b text-teal-900 px-4 py-1 shadow-md`} role="alert"
+                className={ `${getNameByAverageFilter[getAverageFilter]} border-t-4 rounded-b text-teal-900 px-4 py-1 shadow-md`} role="alert"
               >
                 <div className="flex justify-center">
                   <p className="font-bold">Promedio por filtrado - 
-                    { despicableFilter ? " Nulo" : 
-                      lowFilter ? " Bajo" : 
-                      middleFilter ? " Medio":
-                      highFilter ? " Alto" : 
-                      veryhighFilter ? " Muy Alto" :''
-                    }
+                    { getAverage }
                     <label className='bg-white text-black rounded-full flex justify-center items-center'>
                       { promedioFiltrado() }
                     </label>
@@ -177,7 +194,7 @@ export const SurveyGuideDetailAverage = () => {
                 </div>
               </div>
             </div>
-          ): (<div></div>)}
+          ):null}
           <Button className="bg-slate-800 text-white w-full"
             onClick={handleClearSearch}
             endContent={
@@ -206,10 +223,10 @@ export const SurveyGuideDetailAverage = () => {
             label="Buscar por área"
             className="z-0"
             startContent={<BuildingComunity />}
-            onSelectionChange={(key) => handleSearchChangeArea(key as string || '')}
+            onSelectionChange={(key) => handleSearchChangeArea(key as string || '')}        
             selectedKey={queryArea}
           >
-            {areas?.map(({ id, name, percentage }) => (
+            {areas?.map(({ id, name, percentage }) => ( guide?.gradable ? (
               <AutocompleteItem 
                 key={id}
                 value={id}
@@ -218,27 +235,38 @@ export const SurveyGuideDetailAverage = () => {
                   <Chip isDisabled size='md' variant='solid' className='bg-black text-white'>{percentage}%</Chip>
                 }
               >{name}</AutocompleteItem>
-            ))}
+            ) : ( <AutocompleteItem key={id} value={id}>{name}</AutocompleteItem> )))}
           </Autocomplete>
-          {(queryArea && subareas.length > 0) && (
+          {queryArea && subareas?.length > 0 && (
             <Autocomplete
               label="Buscar por área"
               className="z-0 md:col-span-2 lg:col-span-1"
               startContent={<BuildingComunity />}
-              onSelectionChange={(key) => handleSearchChangeOption(key as string || '')}
+              onSelectionChange={(key) => handleSearchChangeOption(key as string)}
               selectedKey={querySubArea}
             >
-              {subareas?.map(({ id, name, percentage }) => (
-                <AutocompleteItem 
-                  key={id} 
-                  value={id}
-                  startContent={
-                    <Chip isDisabled size='md' variant='solid' className='bg-black text-white'>{percentage}%</Chip>
-                  }
-                >{name}</AutocompleteItem>
+              {subareas.map(({ id, name, percentage }) => (
+                guide?.gradable ? (
+                  <AutocompleteItem 
+                    key={id} 
+                    value={id}
+                    startContent={
+                      <Chip isDisabled size='md' variant='solid' className='bg-black text-white'>
+                        {percentage}%
+                      </Chip>
+                    }
+                  >
+                    {name}
+                  </AutocompleteItem>
+                ) : (
+                  <AutocompleteItem key={id} value={id}>
+                    {name}
+                  </AutocompleteItem>
+                )
               ))}
             </Autocomplete>
           )}
+
           {((queryArea && subareas.length === 0) || (queryArea && querySubArea)) && ( 
             <Autocomplete
               label="Sexo"
@@ -294,8 +322,7 @@ export const SurveyGuideDetailAverage = () => {
             <TableColumn> </TableColumn>
           </TableHeader>
           <TableBody>
-            {
-              guideUserSurvey?.map(({ user, total, status }, index) => (
+            {guideUserSurvey?.map(({ user, total, status }, index) => (
                 <TableRow key={`date-key-${user?.id}`}>
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>

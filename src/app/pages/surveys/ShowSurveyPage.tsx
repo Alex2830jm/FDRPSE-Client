@@ -64,7 +64,7 @@ export const ShowSurveyPage = () => {
                 <TableColumn>Fecha de inicio</TableColumn>
                 <TableColumn>Estatus</TableColumn>
                 <TableColumn>Tipo de cuestionario</TableColumn>
-                <TableColumn> </TableColumn>
+                <TableColumn>Acciones </TableColumn>
               </TableHeader>
               <TableBody loadingContent={<Spinner color="success" />} isLoading={loading}>
                 {
@@ -102,19 +102,12 @@ export const ShowSurveyPage = () => {
                       </TableCell>
                       <TableCell>
                         <div className="relative flex items-center gap-2">
-                          <Button onClick={() => navigate(`detail/${guide.id}`)}
-                            className="bg-slate-800 text-white text-xs h-9 font-bold"
+                          <Button 
+                            onClick={() => navigate(`detail/${guide.id}/averages`)}
+                            className='bg-slate-800 w-40 text-white text-xs h-9 font-bold'
+                            isLoading={loading}
                             endContent={
-                              <span className="bg-white text-slate-800 rounded-full p-[1.2px]">
-                                <EyeIcon width={15} height={15} strokeWidth={2} />
-                              </span>}>
-                            Ver
-                          </Button>
-                          {guide.gradable ? (
-                            <Button 
-                              onClick={() => navigate(`detail/${guide.id}/averages`)}
-                              className='bg-slate-800 text-white text-xs h-9 font-bold'
-                              endContent={
+                              guide.gradable ? (
                                 <span className='bg-white text-slate-800 rounded p-[1.2px]'>
                                   <StatisticsIcon
                                     width={15}
@@ -122,72 +115,54 @@ export const ShowSurveyPage = () => {
                                     strokeWidth={2}
                                   />
                                 </span>
-                              }
-                              > Ver Promedios </Button>
-                          ): (
-                            <Chip
-                              className="capitalize"
-                              startContent={
-                                <span className="text-yellow-600 bg-yellow-300/20 rounded-full p-[2px] flex items-center justify-center">
-                                  <StarsOff width={15} height={15} />
+                              ) : (
+                                <span className='bg-white text-slate-800 rounded p-[1.2px]'>
+                                  <EyeIcon width={15} height={15} strokeWidth={2} />
                                 </span>
-                              }
-                              classNames={{
-                                base: "bg-yellow-500/10",
-                                content: "font-bold text-xs",
-                              }}
-                              size="sm"
-                              variant="solid"
-                            > No es evaluativo </Chip>
+                              )}
+                          > {`Ver ${guide.gradable ? 'Promedios' : 'Detalles'}`} </Button>
+                          {( guide.status === StatusGuide.inProgress) && (
+                            <Fragment>
+                              <Button
+                                onClick={() => { guideRef.current = guide; onOpen() }}
+                                className="bg-amber-600 text-white text-xs h-9 font-bold"
+                                isLoading={loading}
+                                endContent={
+                                  <span className="bg-white text-amber-600 rounded-full p-[1.2px]">
+                                    <PausePlayer width={15} height={15} strokeWidth={2.5} />
+                                  </span>
+                              }> Pausar </Button>
+                              <Button onClick={() => startFinalizeGuideSurvey(id!, `${guide.id}`)}
+                                className="bg-emerald-600 text-white text-xs h-9 font-bold"
+                                endContent={
+                                  <span className="bg-white text-emerald-600 rounded-full p-[1.2px]">
+                                    <CheckIcon width={15} height={15} strokeWidth={2.5} />
+                                  </span>
+                              }> Terminar </Button>
+                            </Fragment>
+                          )}
+                          {(guide.status === StatusGuide.paused) && (
+                            <Button
+                              onClick={() => { guideRef.current = guide; onOpen(); }}
+                              className="bg-amber-600 text-white text-xs h-9 font-bold"
+                              isLoading={loading}
+                              endContent={
+                                <span className="bg-white text-amber-600 rounded-full p-[1.2px]">
+                                  <PlayerPlay width={15} height={15} strokeWidth={2.5} />
+                                </span>
+                            }> Continuar </Button>
                           )}
                           {
-                            (guide.status === StatusGuide.inProgress) && (
-                              <Fragment>
-                                <Button
-                                  onClick={() => { guideRef.current = guide; onOpen() }}
-                                  className="bg-amber-600 text-white text-xs h-9 font-bold"
-                                  isLoading={loading}
-                                  endContent={
-                                    <span className="bg-white text-amber-600 rounded-full p-[1.2px]">
-                                      <PausePlayer width={15} height={15} strokeWidth={2.5} />
-                                    </span>}>
-                                  Pausar
-                                </Button>
-                                <Button onClick={() => startFinalizeGuideSurvey(id!, `${guide.id}`)}
+                            (guide.status === 0) && (
+                              
+                                <Button onClick={() => { guideRef.current = guide; onOpen() }}
                                   className="bg-emerald-600 text-white text-xs h-9 font-bold"
                                   endContent={
                                     <span className="bg-white text-emerald-600 rounded-full p-[1.2px]">
                                       <CheckIcon width={15} height={15} strokeWidth={2.5} />
                                     </span>}>
-                                  Terminar
+                                  Comenzar
                                 </Button>
-                              </Fragment>
-                            )
-                          }
-                          {
-                            (guide.status === StatusGuide.paused) && (
-                              <Button
-                                onClick={() => { guideRef.current = guide; onOpen(); }}
-                                className="bg-amber-600 text-white text-xs h-9 font-bold"
-                                isLoading={loading}
-                                endContent={
-                                  <span className="bg-white text-amber-600 rounded-full p-[1.2px]">
-                                    <PlayerPlay width={15} height={15} strokeWidth={2.5} />
-                                  </span>}>
-                                Continuar
-                              </Button>
-                            )
-                          }
-                          {
-                            (guide.status === 0) && (
-                              <Button onClick={() => { guideRef.current = guide; onOpen() }}
-                                className="bg-emerald-600 text-white text-xs h-9 font-bold"
-                                endContent={
-                                  <span className="bg-white text-emerald-600 rounded-full p-[1.2px]">
-                                    <CheckIcon width={15} height={15} strokeWidth={2.5} />
-                                  </span>}>
-                                Comenzar
-                              </Button>
                             )
                           }
                         </div>
