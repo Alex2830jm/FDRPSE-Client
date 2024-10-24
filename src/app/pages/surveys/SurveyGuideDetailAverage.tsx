@@ -87,14 +87,16 @@ export const SurveyGuideDetailAverage = () => {
     setQuerySubArea('')
     setQueryArea('');
   }
-
+  
   const promedioFiltrado = () => {
     return guideUserSurvey?.length > 0
       ? Number((guideUserSurvey.reduce((acc, { total }) => acc + total, 0) / guideUserSurvey?.length).toFixed(2))
       : 0;
   };
 
-  
+  console.log(areas)
+
+    
   const getAverage= useMemo(() => {
     return getNameOfQualification ({
       despicable: guide?.qualification?.despicable!,
@@ -132,6 +134,18 @@ export const SurveyGuideDetailAverage = () => {
     ['Muy alto']  : 'bg-red-400 border-red-600',
     ['NA']        : 'bg-gray-600'
   }
+
+  // Se empiezan a validar ciertos errores
+  const parentNode = document.getElementById('parentElement');
+  const newNode = document.createElement('div');
+  const existingNode = document.getElementById('existingNode');
+
+  if (existingNode?.parentNode === parentNode) {
+    parentNode?.insertBefore(newNode, existingNode);
+  } else {
+    console.error("Los nodos no comparten el mismo padre o 'existingNode' no está en el DOM");
+  }
+
   return (
     <PageLayout title="Detalle de cuestionario">
       <Fragment>
@@ -166,7 +180,7 @@ export const SurveyGuideDetailAverage = () => {
           <h2 className="bg-gradient-to-r from-primary via-emerald-600 to-emerald-600 inline-block text-transparent lg:py-5 bg-clip-text text-xl lg:text-5xl font-bold">
             {guide?.name}
               {guide.gradable ? (
-                <label className={`${getNameByAverage[getAverage]} inline-block border-black lg:py-5 bg-clip-text text-xl lg:text-5xl font-bold`}
+                <label className={`${getNameByAverage[getAverage]} inline-block text-transparent lg:py-5 bg-clip-text text-xl lg:text-5xl font-bold`}
               >: GPA { average } - 100 % </label>
               ): null}
             </h2>
@@ -185,8 +199,7 @@ export const SurveyGuideDetailAverage = () => {
                 className={ `${getNameByAverageFilter[getAverageFilter]} border-t-4 rounded-b text-teal-900 px-4 py-1 shadow-md`} role="alert"
               >
                 <div className="flex justify-center">
-                  <p className="font-bold">Promedio por filtrado - 
-                    { getAverage }
+                  <p className="font-bold">Promedio por filtrado - { getAverageFilter }
                     <label className='bg-white text-black rounded-full flex justify-center items-center'>
                       { promedioFiltrado() }
                     </label>

@@ -3,16 +3,19 @@ import { useParams } from 'react-router-dom';
 import { AlertConfirm, PageLayout } from '../../../infraestructure/components/ui';
 import { surveyService } from '../../../domain/services/survey.service';
 import { Button, Chip, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, useDisclosure } from '@nextui-org/react';
-import { CheckIcon, CircleCheck, EyeIcon, FileDescription, InfoCircle, PausePlayer, PlayerPlay, StarsIcon, StarsOff, StatisticsIcon } from '../../../infraestructure/components/icons';
+import { ChartIcon, CheckIcon, CircleCheck, EyeIcon, FileDescription, InfoCircle, PausePlayer, PlayerPlay, StarsIcon, StarsOff, StatisticsIcon, StatisticsPieIcon, XIcon } from '../../../infraestructure/components/icons';
+import { Modal } from '../../../infraestructure/components/ui/Modal';
 
 import { useNavigation } from '../../hooks/useNavigation';
 import { Guide, StatusGuide } from '../../../domain/models';
+import { StatisticsPie } from '../../../infraestructure/components/charts';
 
 export const ShowSurveyPage = () => {
 
   const { id } = useParams();
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isOpen: isOpenStatistics, onOpen: onOpenStatistics, onOpenChange: onOpenChangeStatistics } = useDisclosure();
 
   const { startShowSurvey, survey, startPausedOrContinueGuide, loading, startFinalizeGuideSurvey, clearCacheForAvailableSurvey, startGuide, startFinalizeSurvey } = surveyService();
 
@@ -71,7 +74,18 @@ export const ShowSurveyPage = () => {
                   survey?.guides?.map((guide, index) => (
                     <TableRow key={`date-key-${index}`}>
                       <TableCell>{index + 1}</TableCell>
-                      <TableCell className="text-xs">{guide.name}</TableCell>
+                      <TableCell className="text-xs">
+                        {guide.name}
+                        {guide.gradable && (
+                          <Button onClick={() => {onOpenStatistics()}}
+                            className='bg-sky-500 text-white text-sx'
+                            isLoading={loading}
+                            endContent={
+                              <StatisticsPieIcon width={15} height={15} strokeWidth={2.5} />
+                            }
+                        />
+                        )}
+                      </TableCell>
                       <TableCell>{guide.createdAt.toLocaleDateString()}</TableCell>
                       <TableCell>
                         <Chip
@@ -103,7 +117,7 @@ export const ShowSurveyPage = () => {
                       <TableCell>
                         <div className="relative flex items-center gap-2">
                           <Button 
-                            onClick={() => navigate(`detail/${guide.id}/averages`)}
+                            onClick={() => navigate(`detail/${guide.id}/`)}
                             className='bg-slate-800 w-40 text-white text-xs h-9 font-bold'
                             isLoading={loading}
                             endContent={
@@ -225,8 +239,30 @@ export const ShowSurveyPage = () => {
               }
             }
           }
+        />
 
-
+        <Modal
+          title=""
+          isOpen={isOpenStatistics}
+          onChange={onOpenChangeStatistics}
+          size="5xl"
+          hideCloseButton
+          renderContent={(onClose) => (
+            <Fragment>
+                <header className='flex items-center justify-between -mt-6 py-1 border-b-2'>
+                  <div className='flex items-center font-bold [&>svg]:text-emerald-600 text-xl [&>svg]:mr-1 pt-4 [&>svg]:border-2 [&>svg]:rounded-full [&>svg]:p1'>
+                    <StatisticsPieIcon width={45} height={45} strokeWidth={1.5} />
+                    <h1>Estadisticas del cuestionario</h1>
+                  </div>
+                  <Button isIconOnly className="border-2 bg-transparent" onClick={onClose}>
+                    <XIcon />
+                  </Button>
+                </header>
+                <section className='items-center justify-center text-center'>
+                  <StatisticsPie/>
+                </section>
+            </Fragment>
+          )}
         />
       </Fragment>
     </PageLayout >

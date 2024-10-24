@@ -58,6 +58,7 @@ export { SquareRoundedX } from './SquareRoundedX';
 export { StarsIcon } from './StarsIcon';
 export { StarsOff } from './StarsOff';
 export { StatisticsIcon } from './StatisticsIcon';
+export { StatisticsPieIcon } from './StatisticsPieIcon'
 export { TimeLine } from './TimeLine';
 export { TrashIcon } from './TrashIcon';
 export { UserIcon } from './UserIcon';
