@@ -1,18 +1,21 @@
-import { Fragment, useEffect, useRef } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { AlertConfirm, PageLayout } from '../../../infraestructure/components/ui';
 import { surveyService } from '../../../domain/services/survey.service';
 import { Button, Chip, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, useDisclosure } from '@nextui-org/react';
-import { ChartIcon, CheckIcon, CircleCheck, EyeIcon, FileDescription, InfoCircle, PausePlayer, PlayerPlay, StarsIcon, StarsOff, StatisticsIcon, StatisticsPieIcon, XIcon } from '../../../infraestructure/components/icons';
+import { CheckIcon, CircleCheck, EyeIcon, FileDescription, InfoCircle, PausePlayer, PlayerPlay, StarsIcon, StarsOff, StatisticsIcon, StatisticsPieIcon, XIcon } from '../../../infraestructure/components/icons';
 import { Modal } from '../../../infraestructure/components/ui/Modal';
 
 import { useNavigation } from '../../hooks/useNavigation';
 import { Guide, StatusGuide } from '../../../domain/models';
 import { StatisticsPie } from '../../../infraestructure/components/charts';
+import { StatisticsGuide } from '../../../infraestructure/components/survey/StatisticsGuide';
 
 export const ShowSurveyPage = () => {
 
   const { id } = useParams();
+  const [ guideId, setGuideId] = useState('');
+
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { isOpen: isOpenStatistics, onOpen: onOpenStatistics, onOpenChange: onOpenChangeStatistics } = useDisclosure();
@@ -75,15 +78,13 @@ export const ShowSurveyPage = () => {
                     <TableRow key={`date-key-${index}`}>
                       <TableCell>{index + 1}</TableCell>
                       <TableCell className="text-xs">
-                        {guide.name}
+                        {guide.name} {' '}
                         {guide.gradable && (
-                          <Button onClick={() => {onOpenStatistics()}}
-                            className='bg-sky-500 text-white text-sx'
+                          <Button isIconOnly className='bg-sky-500' onClick={() => {onOpenStatistics(); setGuideId(`${guide.id}`)}}
                             isLoading={loading}
-                            endContent={
-                              <StatisticsPieIcon width={15} height={15} strokeWidth={2.5} />
-                            }
-                        />
+                          >
+                            <StatisticsPieIcon width={10} height={10} strokeWidth={2.5} />
+                          </Button>
                         )}
                       </TableCell>
                       <TableCell>{guide.createdAt.toLocaleDateString()}</TableCell>
@@ -259,7 +260,10 @@ export const ShowSurveyPage = () => {
                   </Button>
                 </header>
                 <section className='items-center justify-center text-center'>
-                  <StatisticsPie/>
+                  <StatisticsGuide 
+                    surveyId={id!}
+                    guideId={guideId}
+                  />
                 </section>
             </Fragment>
           )}
